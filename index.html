@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霍金斯能量频率测试 | 心灵频率校准</title>
+    <!-- 引入Tailwind CSS（治愈感样式） -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入Chart.js（雷达图） -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 引入字体图标 -->
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    
+    <!-- 自定义Tailwind配置（治愈色系） -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        calm: {
+                            50: '#f8f9fa',
+                            100: '#e8f4f8',
+                            200: '#d1e7dd',
+                            300: '#b2dbb8',
+                            400: '#82c99d',
+                            500: '#5cb85c',
+                            600: '#4cae4c',
+                            700: '#3d8b3d',
+                            800: '#2c6e2c',
+                            900: '#1b5e1b'
+                        },
+                        soft: {
+                            50: '#fdf2f8',
+                            100: '#fef7fb',
+                            200: '#fcf1f7',
+                            300: '#faf0f5',
+                            400: '#f5d0e4',
+                            500: '#e8a8c7',
+                            600: '#d97fa8',
+                            700: '#c45588',
+                            800: '#a6406d',
+                            900: '#882e57'
+                        },
+                        gentle: {
+                            50: '#f5f5f5',
+                            100: '#eceff1',
+                            200: '#dee2e6',
+                            300: '#cfd8dc',
+                            400: '#b0bec5',
+                            500: '#90a4ae',
+                            600: '#78909c',
+                            700: '#607d8b',
+                            800: '#546e7a',
+                            900: '#455a64'
+                        }
+                    },
+                    fontFamily: {
+                        gentle: ['Inter', 'PingFang SC', 'Microsoft YaHei', 'sans-serif'],
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'fade-in': 'fadeIn 0.8s ease-in-out',
+                        'slide-up': 'slideUp 0.6s ease-out',
+                        'calculating': 'calculating 2s linear infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        calculating: {
+                            '0%': { transform: 'rotate(0deg)' },
+                            '100%': { transform: 'rotate(360deg)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .text-shadow-sm { text-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+            .bg-blur { backdrop-filter: blur(8px); }
+            .transition-all-smooth { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+            .radar-grid { background: radial-gradient(circle at center, rgba(130, 201, 157, 0.1) 0%, rgba(255,255,255,0) 70%); }
+        }
+    </style>
+</head>
+
+<body class="bg-calm-50 font-gentle text-gentle-800 min-h-screen flex flex-col items-center justify-start p-4 md:p-8">
+    <!-- 1. 封面入口页 -->
+    <div id="cover-page" class="w-full max-w-2xl mx-auto animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6">
+            <div class="text-center mb-8">
+                <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-calm-700 mb-2">霍金斯能量频率测试</h1>
+                <p class="text-gentle-600 mb-6">40道题，探索你的内在能量层级，遇见更平和的自己</p>
+                <button id="start-test" class="bg-calm-500 hover:bg-calm-600 text-white font-medium py-3 px-8 rounded-full shadow-md transition-all-smooth">
+                    开始测试 <i class="fa fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+            
+            <!-- 历史记录区域 -->
+            <div class="mt-8">
+                <h2 class="text-lg font-semibold text-gentle-700 mb-4 flex items-center">
+                    <i class="fa fa-history mr-2 text-calm-500"></i> 历史测试记录
+                </h2>
+                <div id="history-records" class="bg-calm-50 rounded-xl p-4 min-h-[100px]">
+                    <p class="text-gentle-500 text-center" id="no-history">暂无测试记录，开始你的第一次探索吧～</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. 沉浸式答题页 -->
+    <div id="quiz-page" class="w-full max-w-2xl mx-auto hidden animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <!-- 答题进度 -->
+            <div class="mb-6">
+                <div class="flex justify-between text-sm text-gentle-500 mb-2">
+                    <span id="progress-text">第 1/40 题</span>
+                    <span id="progress-percent">2.5%</span>
+                </div>
+                <div class="w-full h-2 bg-calm-100 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-calm-500 transition-all-smooth" style="width: 2.5%"></div>
+                </div>
+            </div>
+            
+            <!-- 题目区域 -->
+            <div id="question-container" class="mb-8 animate-slide-up">
+                <h3 id="question-text" class="text-xl font-medium text-gentle-800 mb-6"></h3>
+                <div id="options-container" class="grid grid-cols-1 gap-3">
+                    <!-- 选项会动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 答题操作按钮 -->
+            <div class="flex justify-between mt-8">
+                <button id="prev-btn" class="bg-gentle-100 hover:bg-gentle-200 text-gentle-700 font-medium py-2 px-6 rounded-full shadow-sm transition-all-smooth disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fa fa-arrow-left mr-1"></i> 上一题
+                </button>
+                <button id="next-btn" class="bg-calm-500 hover:bg-calm-600 text-white font-medium py-2 px-6 rounded-full shadow-md transition-all-smooth">
+                    下一题 <i class="fa fa-arrow-right ml-1"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. 频率演算动画页 -->
+    <div id="calculating-page" class="w-full max-w-2xl mx-auto hidden animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-lg p-8 text-center">
+            <div class="mb-6 flex justify-center">
+                <div class="w-20 h-20 border-4 border-calm-200 border-t-calm-500 rounded-full animate-calculating"></div>
+            </div>
+            <h2 class="text-2xl font-bold text-calm-700 mb-2">能量频率演算中</h2>
+            <p class="text-gentle-600">我们正在解析你的每一个选择，探索你的内在能量...</p>
+            <div class="mt-8 h-2 bg-calm-100 rounded-full overflow-hidden">
+                <div id="calculating-progress" class="h-full bg-calm-500 transition-all-smooth" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. 深度分析报告页 -->
+    <div id="report-page" class="w-full max-w-3xl mx-auto hidden animate-fade-in">
+        <div class="bg-white rounded-2xl shadow-lg p-6 md:p-8">
+            <!-- 报告标题 -->
+            <div class="text-center mb-8">
+                <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-calm-700 mb-2">你的能量频率分析报告</h2>
+                <p class="text-gentle-600" id="total-energy-score"></p>
+            </div>
+            
+            <!-- 能量雷达图 -->
+            <div class="mb-8 radar-grid p-4 rounded-xl">
+                <canvas id="energy-radar-chart" width="400" height="300"></canvas>
+            </div>
+            
+            <!-- 整体分析 -->
+            <div class="mb-8 bg-calm-50 rounded-xl p-6">
+                <h3 class="text-lg font-semibold text-calm-700 mb-3">整体能量解读</h3>
+                <p id="overall-analysis" class="text-gentle-700 leading-relaxed"></p>
+            </div>
+            
+            <!-- 各维度详细解释 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <div id="dimension-details" class="col-span-1 md:col-span-2">
+                    <!-- 各维度解释动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 操作按钮 -->
+            <div class="text-center mt-8">
+                <button id="restart-test" class="bg-calm-500 hover:bg-calm-600 text-white font-medium py-3 px-8 rounded-full shadow-md transition-all-smooth mr-4">
+                    重新测试
+                </button>
+                <button id="share-test" class="bg-soft-500 hover:bg-soft-600 text-white font-medium py-3 px-8 rounded-full shadow-md transition-all-smooth">
+                    分享测试 <i class="fa fa-share-alt ml-2"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 1. 霍金斯能量层级测试题（40道，分配到8个维度）
+        const quizQuestions = [
+            // 维度1：勇气（Courage）- 5题
+            {
+                id: 1,
+                dimension: "勇气",
+                text: "当面对未知的挑战时，你更倾向于？",
+                options: [
+                    { score: 1, text: "逃避，担心失败带来的负面评价" },
+                    { score: 2, text: "犹豫，需要他人鼓励才敢尝试" },
+                    { score: 3, text: "谨慎评估后，愿意尝试新的可能" },
+                    { score: 4, text: "主动迎接，视挑战为成长的机会" },
+                    { score: 5, text: "充满信心，享受突破自我的过程" }
+                ]
+            },
+            {
+                id: 2,
+                dimension: "勇气",
+                text: "当你的观点被否定时，你会？",
+                options: [
+                    { score: 1, text: "立刻退缩，不敢再表达自己" },
+                    { score: 2, text: "感到委屈，但不会反驳" },
+                    { score: 3, text: "平静解释自己的想法，不强求认同" },
+                    { score: 4, text: "理性辩论，尊重不同意见" },
+                    { score: 5, text: "坦然面对，从不同视角反思自己" }
+                ]
+            },
+            {
+                id: 3,
+                dimension: "勇气",
+                text: "面对自己的错误，你通常会？",
+                options: [
+                    { score: 1, text: "自责且逃避，不愿面对后果" },
+                    { score: 2, text: "感到羞愧，试图掩盖错误" },
+                    { score: 3, text: "承认错误，愿意承担相应责任" },
+                    { score: 4, text: "从中学习，总结经验避免再犯" },
+                    { score: 5, text: "视为成长契机，主动改进自己" }
+                ]
+            },
+            {
+                id: 4,
+                dimension: "勇气",
+                text: "当你需要做出重大决定时，你会？",
+                options: [
+                    { score: 1, text: "完全依赖他人，不敢自己做主" },
+                    { score: 2, text: "纠结很久，害怕做出错误选择" },
+                    { score: 3, text: "收集信息后，做出自己的选择" },
+                    { score: 4, text: "果断决策，愿意承担决策的后果" },
+                    { score: 5, text: "跟随内心，相信自己的判断" }
+                ]
+            },
+            {
+                id: 5,
+                dimension: "勇气",
+                text: "你是否愿意尝试从未接触过的新事物？",
+                options: [
+                    { score: 1, text: "完全不愿意，害怕不适应" },
+                    { score: 2, text: "偶尔会，但需要有人陪伴" },
+                    { score: 3, text: "中立，看具体事物是否感兴趣" },
+                    { score: 4, text: "愿意尝试，保持开放的心态" },
+                    { score: 5, text: "主动探索，享受新体验带来的乐趣" }
+                ]
+            },
+            
+            // 维度2：淡定（Serenity）- 5题
+            {
+                id: 6,
+                dimension: "淡定",
+                text: "当生活节奏被打乱时，你会？",
+                options: [
+                    { score: 1, text: "极度焦虑，无法平静下来" },
+                    { score: 2, text: "烦躁不安，容易发脾气" },
+                    { score: 3, text: "尝试调整，慢慢恢复状态" },
+                    { score: 4, text: "坦然接受，灵活应对变化" },
+                    { score: 5, text: "全然接纳，享受当下的不确定性" }
+                ]
+            },
+            {
+                id: 7,
+                dimension: "淡定",
+                text: "独处时，你的内心状态是？",
+                options: [
+                    { score: 1, text: "感到孤独和恐惧，总想找人陪伴" },
+                    { score: 2, text: "有点无聊，需要刷手机打发时间" },
+                    { score: 3, text: "平静放松，偶尔思考生活" },
+                    { score: 4, text: "享受独处，与自己内心连接" },
+                    { score: 5, text: "全然安住，感受内在的平和" }
+                ]
+            },
+            {
+                id: 8,
+                dimension: "淡定",
+                text: "当遇到突发的负面事件时，你会？",
+                options: [
+                    { score: 1, text: "崩溃大哭，无法控制情绪" },
+                    { score: 2, text: "紧张慌乱，不知如何应对" },
+                    { score: 3, text: "先冷静下来，再想解决办法" },
+                    { score: 4, text: "保持镇定，理性分析问题" },
+                    { score: 5, text: "内心平静，相信一切都有解决方案" }
+                ]
+            },
+            {
+                id: 9,
+                dimension: "淡定",
+                text: "你对生活中的小意外的态度是？",
+                options: [
+                    { score: 1, text: "非常在意，影响一整天的心情" },
+                    { score: 2, text: "感到烦躁，需要时间平复" },
+                    { score: 3, text: "无所谓，过了就忘了" },
+                    { score: 4, text: "一笑而过，视为生活的小插曲" },
+                    { score: 5, text: "全然接纳，享受生活的不完美" }
+                ]
+            },
+            {
+                id: 10,
+                dimension: "淡定",
+                text: "当你感到压力大时，你会？",
+                options: [
+                    { score: 1, text: "陷入焦虑，无法自拔" },
+                    { score: 2, text: "通过暴饮暴食/刷手机逃避" },
+                    { score: 3, text: "找朋友倾诉，释放情绪" },
+                    { score: 4, text: "通过冥想/运动等方式调节" },
+                    { score: 5, text: "与压力共处，觉察并放下焦虑" }
+                ]
+            },
+            
+            // 维度3：主动（Initiative）- 5题
+            {
+                id: 11,
+                dimension: "主动",
+                text: "对于自己想要的生活，你会？",
+                options: [
+                    { score: 1, text: "只是空想，从不采取行动" },
+                    { score: 2, text: "偶尔想行动，但总找借口拖延" },
+                    { score: 3, text: "有计划，但需要他人督促才执行" },
+                    { score: 4, text: "主动制定计划并坚持执行" },
+                    { score: 5, text: "充满热情地行动，享受创造的过程" }
+                ]
+            },
+            {
+                id: 12,
+                dimension: "主动",
+                text: "当发现自己的不足时，你会？",
+                options: [
+                    { score: 1, text: "自暴自弃，认为自己无法改变" },
+                    { score: 2, text: "感到沮丧，但不愿付出努力" },
+                    { score: 3, text: "承认不足，偶尔尝试改进" },
+                    { score: 4, text: "主动学习，持续提升自己" },
+                    { score: 5, text: "视为成长机会，积极探索改进方法" }
+                ]
+            },
+            {
+                id: 13,
+                dimension: "主动",
+                text: "你对待新的知识/技能的态度是？",
+                options: [
+                    { score: 1, text: "抗拒学习，觉得太难了" },
+                    { score: 2, text: "被动学习，只为应付需求" },
+                    { score: 3, text: "有需要时才会去学习" },
+                    { score: 4, text: "主动学习，丰富自己的认知" },
+                    { score: 5, text: "充满好奇，持续探索和学习" }
+                ]
+            },
+            {
+                id: 14,
+                dimension: "主动",
+                text: "在人际关系中，你会主动维护吗？",
+                options: [
+                    { score: 1, text: "从不主动，等别人来找自己" },
+                    { score: 2, text: "偶尔主动，心情好的时候才联系" },
+                    { score: 3, text: "会主动，但只对亲近的人" },
+                    { score: 4, text: "主动关心身边的人，维护关系" },
+                    { score: 5, text: "积极建立和维护有意义的连接" }
+                ]
+            },
+            {
+                id: 15,
+                dimension: "主动",
+                text: "对于生活中的目标，你会？",
+                options: [
+                    { score: 1, text: "没有目标，随波逐流" },
+                    { score: 2, text: "有模糊的目标，但不行动" },
+                    { score: 3, text: "有明确目标，偶尔采取行动" },
+                    { score: 4, text: "有目标并制定计划，持续行动" },
+                    { score: 5, text: "以目标为导向，充满动力地前进" }
+                ]
+            },
+            
+            // 维度4：宽容（Forgiveness）- 5题
+            {
+                id: 16,
+                dimension: "宽容",
+                text: "当别人伤害了你，你会？",
+                options: [
+                    { score: 1, text: "记恨一辈子，绝不原谅" },
+                    { score: 2, text: "表面原谅，内心仍有怨恨" },
+                    { score: 3, text: "慢慢放下，不再计较" },
+                    { score: 4, text: "理解对方的处境，选择原谅" },
+                    { score: 5, text: "全然接纳，从伤害中成长" }
+                ]
+            },
+            {
+                id: 17,
+                dimension: "宽容",
+                text: "你对他人的缺点的态度是？",
+                options: [
+                    { score: 1, text: "无法容忍，总是批评指责" },
+                    { score: 2, text: "感到反感，不愿接触有缺点的人" },
+                    { score: 3, text: "可以接受，但会保持距离" },
+                    { score: 4, text: "理解并接纳，每个人都不完美" },
+                    { score: 5, text: "欣赏独特性，从缺点中看到成长的可能" }
+                ]
+            },
+            {
+                id: 18,
+                dimension: "宽容",
+                text: "当你和他人产生分歧时，你会？",
+                options: [
+                    { score: 1, text: "必须争赢，证明自己是对的" },
+                    { score: 2, text: "坚持自己的观点，不愿妥协" },
+                    { score: 3, text: "各退一步，求同存异" },
+                    { score: 4, text: "倾听对方的想法，理解不同视角" },
+                    { score: 5, text: "接纳所有观点，从中找到共通点" }
+                ]
+            },
+            {
+                id: 19,
+                dimension: "宽容",
+                text: "你是否会原谅自己的错误？",
+                options: [
+                    { score: 1, text: "从不原谅，一直自责" },
+                    { score: 2, text: "很难原谅，经常自我否定" },
+                    { score: 3, text: "偶尔原谅，需要时间释怀" },
+                    { score: 4, text: "愿意原谅，接纳自己的不完美" },
+                    { score: 5, text: "全然原谅，视错误为成长的礼物" }
+                ]
+            },
+            {
+                id: 20,
+                dimension: "宽容",
+                text: "面对和自己价值观不同的人，你会？",
+                options: [
+                    { score: 1, text: "排斥和鄙视，不愿交流" },
+                    { score: 2, text: "保持距离，不认可对方的价值观" },
+                    { score: 3, text: "可以交流，但不认同" },
+                    { score: 4, text: "尊重差异，保持开放的心态" },
+                    { score: 5, text: "欣赏多样性，从不同价值观中学习" }
+                ]
+            },
+            
+            // 维度5：明智（Wisdom）- 5题
+            {
+                id: 21,
+                dimension: "明智",
+                text: "当遇到问题时，你会如何思考？",
+                options: [
+                    { score: 1, text: "凭直觉，不做任何分析" },
+                    { score: 2, text: "只看表面，不深入思考" },
+                    { score: 3, text: "简单分析，考虑眼前的因素" },
+                    { score: 4, text: "全面分析，考虑多方面因素" },
+                    { score: 5, text: "深度思考，看到问题的本质和长远影响" }
+                ]
+            },
+            {
+                id: 22,
+                dimension: "明智",
+                text: "你对他人的建议的态度是？",
+                options: [
+                    { score: 1, text: "完全不听，只相信自己" },
+                    { score: 2, text: "听了但不思考，依然按自己的来" },
+                    { score: 3, text: "选择性听取，只接受认同的" },
+                    { score: 4, text: "理性分析，取其精华去其糟粕" },
+                    { score: 5, text: "开放接纳，从不同建议中获得智慧" }
+                ]
+            },
+            {
+                id: 23,
+                dimension: "明智",
+                text: "你如何看待生活中的经历？",
+                options: [
+                    { score: 1, text: "只是经历，没有任何意义" },
+                    { score: 2, text: "好坏参半，只记住开心的" },
+                    { score: 3, text: "有得有失，偶尔总结经验" },
+                    { score: 4, text: "每段经历都有价值，从中学习" },
+                    { score: 5, text: "所有经历都是成长的智慧，全然接纳" }
+                ]
+            },
+            {
+                id: 24,
+                dimension: "明智",
+                text: "面对复杂的信息，你会？",
+                options: [
+                    { score: 1, text: "感到混乱，不愿梳理" },
+                    { score: 2, text: "只看表面，不辨真伪" },
+                    { score: 3, text: "简单筛选，保留自己认可的" },
+                    { score: 4, text: "理性辨别，分析信息的真实性" },
+                    { score: 5, text: "深度梳理，看到信息背后的本质" }
+                ]
+            },
+            {
+                id: 25,
+                dimension: "明智",
+                text: "你是否会反思自己的行为和决策？",
+                options: [
+                    { score: 1, text: "从不反思，认为自己永远是对的" },
+                    { score: 2, text: "偶尔反思，但不改变行为" },
+                    { score: 3, text: "遇到问题才反思，总结教训" },
+                    { score: 4, text: "定期反思，持续优化自己" },
+                    { score: 5, text: "时刻觉察，从反思中获得智慧" }
+                ]
+            },
+            
+            // 维度6：爱（Love）- 5题
+            {
+                id: 26,
+                dimension: "爱",
+                text: "你如何表达对他人的关心？",
+                options: [
+                    { score: 1, text: "从不表达，觉得没必要" },
+                    { score: 2, text: "偶尔表达，仅限于亲近的人" },
+                    { score: 3, text: "在特殊节日表达，如生日/节日" },
+                    { score: 4, text: "经常表达，用行动和语言传递" },
+                    { score: 5, text: "自然流露，无条件地给予爱和关心" }
+                ]
+            },
+            {
+                id: 27,
+                dimension: "爱",
+                text: "你对自己的态度是？",
+                options: [
+                    { score: 1, text: "自我否定，不喜欢自己" },
+                    { score: 2, text: "偶尔喜欢，只在做得好的时候" },
+                    { score: 3, text: "接纳自己的一部分，排斥另一部分" },
+                    { score: 4, text: "全面接纳，爱自己的全部" },
+                    { score: 5, text: "全然爱自己，也因此能更好地爱他人" }
+                ]
+            },
+            {
+                id: 28,
+                dimension: "爱",
+                text: "当他人需要帮助时，你会？",
+                options: [
+                    { score: 1, text: "视而不见，觉得和自己无关" },
+                    { score: 2, text: "犹豫是否帮助，担心麻烦" },
+                    { score: 3, text: "在不麻烦的情况下提供帮助" },
+                    { score: 4, text: "主动提供帮助，不求回报" },
+                    { score: 5, text: "无条件地给予帮助，感受付出的快乐" }
+                ]
+            },
+            {
+                id: 29,
+                dimension: "爱",
+                text: "你如何看待身边的人？",
+                options: [
+                    { score: 1, text: "充满防备，觉得他人不可信" },
+                    { score: 2, text: "保持距离，不愿深入了解" },
+                    { score: 3, text: "普通对待，不冷不热" },
+                    { score: 4, text: "善意对待，看到他人的优点" },
+                    { score: 5, text: "充满爱意，接纳并欣赏每一个人" }
+                ]
+            },
+            {
+                id: 30,
+                dimension: "爱",
+                text: "你是否能感受到生活中的美好？",
+                options: [
+                    { score: 1, text: "感受不到，觉得生活很糟糕" },
+                    { score: 2, text: "偶尔感受到，只有在开心的时候" },
+                    { score: 3, text: "经常感受到，关注美好的事物" },
+                    { score: 4, text: "时刻感受，用心发现生活的美好" },
+                    { score: 5, text: "全然沉浸在爱中，生活处处是美好" }
+                ]
+            },
+            
+            // 维度7：喜悦（Joy）- 5题
+            {
+                id: 31,
+                dimension: "喜悦",
+                text: "你的日常情绪状态是？",
+                options: [
+                    { score: 1, text: "经常低落，很少感到开心" },
+                    { score: 2, text: "平淡为主，偶尔有小开心" },
+                    { score: 3, text: "情绪稳定，时有喜悦" },
+                    { score: 4, text: "经常感到喜悦，容易满足" },
+                    { score: 5, text: "持续处于喜悦状态，由内而外的快乐" }
+                ]
+            },
+            {
+                id: 32,
+                dimension: "喜悦",
+                text: "你如何对待生活中的小确幸？",
+                options: [
+                    { score: 1, text: "视而不见，觉得微不足道" },
+                    { score: 2, text: "看到了，但不会放在心上" },
+                    { score: 3, text: "会留意，偶尔感到开心" },
+                    { score: 4, text: "珍惜并感恩，享受小确幸" },
+                    { score: 5, text: "全然体验，每一个小确幸都充满喜悦" }
+                ]
+            },
+            {
+                id: 33,
+                dimension: "喜悦",
+                text: "当你做喜欢的事情时，你会？",
+                options: [
+                    { score: 1, text: "没什么感觉，只是打发时间" },
+                    { score: 2, text: "有点开心，但容易分心" },
+                    { score: 3, text: "专注投入，感到满足" },
+                    { score: 4, text: "沉浸其中，充满快乐" },
+                    { score: 5, text: "全然享受，体验极致的喜悦" }
+                ]
+            },
+            {
+                id: 34,
+                dimension: "喜悦",
+                text: "你是否能从简单的事物中获得快乐？",
+                options: [
+                    { score: 1, text: "不能，只有物质才能带来快乐" },
+                    { score: 2, text: "偶尔能，需要特定的事物" },
+                    { score: 3, text: "可以，比如美食/美景" },
+                    { score: 4, text: "经常能，一杯茶/一本书都能带来快乐" },
+                    { score: 5, text: "时刻能，内在的喜悦不依赖外在事物" }
+                ]
+            },
+            {
+                id: 35,
+                dimension: "喜悦",
+                text: "你如何分享自己的快乐？",
+                options: [
+                    { score: 1, text: "从不分享，觉得快乐是自己的" },
+                    { score: 2, text: "偶尔分享，只和亲近的人" },
+                    { score: 3, text: "愿意分享，看到他人开心也开心" },
+                    { score: 4, text: "主动分享，传递快乐给身边的人" },
+                    { score: 5, text: "自然分享，喜悦会自然流淌给他人" }
+                ]
+            },
+            
+            // 维度8：平和（Peace）- 5题
+            {
+                id: 36,
+                dimension: "平和",
+                text: "你对生活的期待是？",
+                options: [
+                    { score: 1, text: "充满焦虑，总担心未来不好" },
+                    { score: 2, text: "期待完美，不能接受不顺利" },
+                    { score: 3, text: "顺其自然，不强求但有期待" },
+                    { score: 4, text: "接纳一切，享受当下的生活" },
+                    { score: 5, text: "全然平和，无论发生什么都安之若素" }
+                ]
+            },
+            {
+                id: 37,
+                dimension: "平和",
+                text: "当你感到情绪波动时，你会？",
+                options: [
+                    { score: 1, text: "被情绪控制，做出冲动的行为" },
+                    { score: 2, text: "压抑情绪，假装没事" },
+                    { score: 3, text: "释放情绪，之后慢慢平复" },
+                    { score: 4, text: "觉察情绪，不被其左右" },
+                    { score: 5, text: "与情绪共处，保持内心的平和" }
+                ]
+            },
+            {
+                id: 38,
+                dimension: "平和",
+                text: "你如何看待生命的意义？",
+                options: [
+                    { score: 1, text: "觉得没有意义，很迷茫" },
+                    { score: 2, text: "认为意义在于成功和财富" },
+                    { score: 3, text: "觉得意义在于体验和成长" },
+                    { score: 4, text: "认为意义在于内心的平静和满足" },
+                    { score: 5, text: "全然体验生命，和平共处，无需寻找意义" }
+                ]
+            },
+            {
+                id: 39,
+                dimension: "平和",
+                text: "你与自然的连接感是？",
+                options: [
+                    { score: 1, text: "毫无连接，觉得自然和自己无关" },
+                    { score: 2, text: "偶尔接触，但没有感觉" },
+                    { score: 3, text: "喜欢自然，能感受到它的美好" },
+                    { score: 4, text: "融入自然，感到内心平静" },
+                    { score: 5, text: "与自然合一，体验全然的平和" }
+                ]
+            },
+            {
+                id: 40,
+                dimension: "平和",
+                text: "你对自己的人生状态的评价是？",
+                options: [
+                    { score: 1, text: "非常不满意，充满遗憾" },
+                    { score: 2, text: "不太满意，总想改变" },
+                    { score: 3, text: "基本满意，有小的遗憾" },
+                    { score: 4, text: "满意，接纳所有的经历" },
+                    { score: 5, text: "全然平和，享受当下的每一刻" }
+                ]
+            }
+        ];
+
+        // 2. 维度解释数据
+        const dimensionExplanations = {
+            "勇气": {
+                low: "你的勇气维度分值较低，在面对挑战和未知时容易感到恐惧和退缩，缺乏直面问题的信心。这是内在能量不足的表现，尝试从小事开始，逐步突破自己的舒适区，每一次小小的尝试都会积累你的勇气能量。",
+                medium: "你的勇气维度处于中等水平，面对熟悉的挑战能够勇敢应对，但在未知领域仍会犹豫。你有一定的自我突破意愿，只需更多地信任自己，放下对失败的恐惧，就能提升勇气能量。",
+                high: "你的勇气维度分值很高，具备直面挑战和未知的强大内心，敢于突破自我舒适区。这种勇气能量会推动你不断成长，继续保持开放的心态，你的勇气会成为探索人生的重要动力。"
+            },
+            "淡定": {
+                low: "你的淡定维度分值较低，容易被外界环境和突发状况影响，情绪波动较大，难以保持内心的平静。尝试通过深呼吸、冥想等方式练习觉察情绪，让自己慢慢从焦虑中抽离，培养内在的稳定感。",
+                medium: "你的淡定维度处于中等水平，大部分时候能保持情绪稳定，但遇到重大变化或压力时仍会感到焦虑。你已有一定的情绪调节能力，只需更多地活在当下，接纳生活的不确定性，就能提升淡定能量。",
+                high: "你的淡定维度分值很高，无论面对何种状况都能保持内心的平静，不受外界干扰。这种内在的稳定是高能量的体现，你的淡定会让你在任何境遇下都能做出理性的选择，继续保持这份平和。"
+            },
+            "主动": {
+                low: "你的主动维度分值较低，容易陷入被动的生活状态，缺乏行动的动力和目标感，常常随波逐流。尝试从设定小目标开始，每天做一件主动的小事，逐步培养行动的惯性，提升主动能量。",
+                medium: "你的主动维度处于中等水平，有目标和行动意愿，但容易拖延或需要外部督促。你已有改变的想法，只需将大目标拆解为小步骤，持续行动，就能提升主动能量，创造想要的生活。",
+                high: "你的主动维度分值很高，充满行动的动力和创造力，能够主动追求自己想要的生活。这种主动能量会让你不断成长和进步，继续保持这份热情，你的行动会带来丰硕的成果。"
+            },
+            "宽容": {
+                low: "你的宽容维度分值较低，容易记恨他人的过错，也难以接纳自己和他人的不完美，内心充满评判和抗拒。尝试练习放下评判，理解每个人都有自己的成长轨迹，先从原谅自己开始，逐步提升宽容能量。",
+                medium: "你的宽容维度处于中等水平，能够原谅他人的小过错，但面对重大伤害仍会耿耿于怀，也会对自己有较高的要求。你已有接纳的意愿，只需更多地理解和共情，就能提升宽容能量，让内心更自由。",
+                high: "你的宽容维度分值很高，能够全然接纳自己和他人的不完美，放下怨恨和评判。这种宽容能量会让你的内心充满爱与自由，减少内耗，你的包容也会吸引更多美好的关系。"
+            },
+            "明智": {
+                low: "你的明智维度分值较低，容易被表面现象迷惑，缺乏深度思考和反思的能力，常常凭直觉做决定。尝试培养思考的习惯，多问自己“为什么”，从每一次经历中学习，逐步提升明智能量。",
+                medium: "你的明智维度处于中等水平，能够进行基本的思考和分析，但容易陷入固有认知，难以看到问题的本质。你已有理性思考的基础，只需保持开放的心态，接纳不同的观点，就能提升明智能量。",
+                high: "你的明智维度分值很高，具备深度思考和觉察的能力，能够看到事物的本质，从经历中获得智慧。这种明智能量会让你做出更符合内心的选择，继续保持反思和学习，你的智慧会不断增长。"
+            },
+            "爱": {
+                low: "你的爱维度分值较低，难以表达和感受爱，对自己和他人都充满防备，内心缺乏温暖。尝试从关爱自己的小事开始，比如好好吃饭、休息，慢慢打开心扉，允许自己感受和表达爱，提升爱的能量。",
+                medium: "你的爱维度处于中等水平，能够爱自己和亲近的人，但难以无条件地爱，也容易有期待和要求。你已有爱的基础，只需放下期待，全然接纳，就能提升爱的能量，让内心更温暖。",
+                high: "你的爱维度分值很高，能够无条件地爱自己和他人，内心充满温暖和善意。这种爱的能量会让你感受到生活的美好，也会吸引更多的爱与连接，继续保持这份纯粹的爱。"
+            },
+            "喜悦": {
+                low: "你的喜悦维度分值较低，难以感受到快乐，容易被负面情绪笼罩，觉得生活缺乏乐趣。尝试关注生活中的小美好，比如一杯热茶、一缕阳光，慢慢培养感受喜悦的能力，提升喜悦能量。",
+                medium: "你的喜悦维度处于中等水平，能够从外在事物中获得快乐，但这种快乐不够持久，容易受环境影响。你已有感受快乐的能力，只需从内在寻找喜悦，不依赖外在条件，就能提升喜悦能量。",
+                high: "你的喜悦维度分值很高，能够体验到由内而外的持续喜悦，不依赖外在事物。这种喜悦能量是高频率的体现，你的快乐会感染身边的人，继续保持这份内在的喜悦。"
+            },
+            "平和": {
+                low: "你的平和维度分值较低，内心充满焦虑和不安，难以接纳生活的不完美，总想要控制一切。尝试练习放下控制欲，接纳生活的本来面貌，活在当下，逐步培养内在的平和感。",
+                medium: "你的平和维度处于中等水平，大部分时候能保持内心的平静，但面对重大变故仍会感到不安。你已有接纳的基础，只需更多地信任生命的过程，就能提升平和能量，体验更深的宁静。",
+                high: "你的平和维度分值很高，能够全然接纳生活的一切，无论顺境逆境都能保持内心的平和。这种平和能量是霍金斯能量层级的高阶状态，你的宁静会让你体验到生命的本质美好。"
+            }
+        };
+
+        // 3. 全局变量
+        let currentQuestionIndex = 0; // 当前答题索引
+        let userAnswers = {}; // 存储用户答案 {题id: 分值}
+        let dimensionScores = { // 各维度总分
+            "勇气": 0,
+            "淡定": 0,
+            "主动": 0,
+            "宽容": 0,
+            "明智": 0,
+            "爱": 0,
+            "喜悦": 0,
+            "平和": 0
+        };
+        const totalQuestions = quizQuestions.length; // 总题数
+        const questionsPerDimension = 5; // 每个维度的题数
+        const maxScorePerDimension = questionsPerDimension * 5; // 每个维度最高分
+
+        // 4. 页面切换函数
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('[id$="-page"]').forEach(page => {
+                page.classList.add('hidden');
+            });
+            // 显示目标页面
+            document.getElementById(pageId).classList.remove('hidden');
+        }
+
+        // 5. 加载历史记录
+        function loadHistoryRecords() {
+            const history = JSON.parse(localStorage.getItem('energyTestHistory')) || [];
+            const historyContainer = document.getElementById('history-records');
+            const noHistoryText = document.getElementById('no-history');
+            
+            if (history.length === 0) {
+                noHistoryText.style.display = 'block';
+                return;
+            }
+            
+            noHistoryText.style.display = 'none';
+            historyContainer.innerHTML = '';
+            
+            // 按时间倒序排列
+            history.sort((a, b) => new Date(b.testTime) - new Date(a.testTime));
+            
+            history.forEach((record, index) => {
+                const recordCard = document.createElement('div');
+                recordCard.className = 'bg-white rounded-lg shadow-sm p-4 mb-3 transition-all-smooth hover:shadow-md';
+                recordCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-medium text-calm-700">第${index + 1}次测试</span>
+                        <span class="text-sm text-gentle-500">${new Date(record.testTime).toLocaleString()}</span>
+                    </div>
+                    <div class="text-sm text-gentle-700">
+                        整体能量分值：<span class="font-semibold text-calm-600">${record.totalScore}</span>
+                        <span class="ml-2">(${record.energyLevel})</span>
+                    </div>
+                `;
+                historyContainer.appendChild(recordCard);
+            });
+        }
+
+        // 6. 渲染当前题目
+        function renderCurrentQuestion() {
+            const currentQuestion = quizQuestions[currentQuestionIndex];
+            const questionText = document.getElementById('question-text');
+            const optionsContainer = document.getElementById('options-container');
+            const progressText = document.getElementById('progress-text');
+            const progressPercent = document.getElementById('progress-percent');
+            const progressBar = document.getElementById('progress-bar');
+            
+            // 更新进度
+            const currentNum = currentQuestionIndex + 1;
+            const percent = ((currentNum) / totalQuestions) * 100;
+            progressText.textContent = `第 ${currentNum}/${totalQuestions} 题`;
+            progressPercent.textContent = `${percent.toFixed(1)}%`;
+            progressBar.style.width = `${percent}%`;
+            
+            // 更新上一题按钮状态
+            document.getElementById('prev-btn').disabled = currentQuestionIndex === 0;
+            
+            // 渲染题目
+            questionText.textContent = currentQuestion.text;
+            optionsContainer.innerHTML = '';
+            
+            // 渲染选项
+            currentQuestion.options.forEach(option => {
+                const optionBtn = document.createElement('button');
+                optionBtn.className = `w-full text-left p-4 rounded-xl transition-all-smooth ${userAnswers[currentQuestion.id] === option.score ? 'bg-calm-100 border-2 border-calm-500' : 'bg-gentle-50 hover:bg-gentle-100 border border-gentle-200'}`;
+                optionBtn.innerHTML = option.text;
+                
+                optionBtn.addEventListener('click', () => {
+                    // 保存答案
+                    userAnswers[currentQuestion.id] = option.score;
+                    // 高亮选中的选项
+                    optionsContainer.querySelectorAll('button').forEach(btn => {
+                        btn.className = 'w-full text-left p-4 rounded-xl transition-all-smooth bg-gentle-50 hover:bg-gentle-100 border border-gentle-200';
+                    });
+                    optionBtn.className = 'w-full text-left p-4 rounded-xl transition-all-smooth bg-calm-100 border-2 border-calm-500';
+                });
+                
+                optionsContainer.appendChild(optionBtn);
+            });
+        }
+
+        // 7. 计算各维度分值
+        function calculateDimensionScores() {
+            // 重置分值
+            for (let dimension in dimensionScores) {
+                dimensionScores[dimension] = 0;
+            }
+            
+            // 累加各维度分值
+            quizQuestions.forEach(question => {
+                if (userAnswers[question.id]) {
+                    dimensionScores[question.dimension] += userAnswers[question.id];
+                }
+            });
+            
+            // 转换为0-100分制
+            const normalizedScores = {};
+            for (let dimension in dimensionScores) {
+                normalizedScores[dimension] = Math.round((dimensionScores[dimension] / maxScorePerDimension) * 100);
+            }
+            
+            return normalizedScores;
+        }
+
+        // 8. 获取能量层级
+        function getEnergyLevel(totalScore) {
+            if (totalScore < 20) return "羞愧/内疚（低能量）";
+            if (totalScore < 40) return "恐惧/焦虑（低能量）";
+            if (totalScore < 60) return "欲望/愤怒（中低能量）";
+            if (totalScore < 70) return "勇气/淡定（中能量）";
+            if (totalScore < 80) return "主动/宽容（中高能量）";
+            if (totalScore < 90) return "明智/爱（高能量）";
+            return "喜悦/平和（超高能量）";
+        }
+
+        // 9. 生成整体分析
+        function generateOverallAnalysis(totalScore, energyLevel) {
+            if (totalScore < 40) {
+                return `你的整体能量频率分值为${totalScore}分，处于${energyLevel}阶段。当前你的内在能量较为低迷，容易被负面情绪影响，对生活缺乏信心和动力。这是非常正常的状态，每个人都会经历能量低谷。建议你从简单的小事开始，比如每天花10分钟冥想、接触自然，逐步提升自己的能量频率，慢慢走出低谷。`;
+            } else if (totalScore < 70) {
+                return `你的整体能量频率分值为${totalScore}分，处于${energyLevel}阶段。你的内在能量处于中等水平，具备一定的情绪稳定性和行动意愿，但仍有提升的空间。你已有能力面对生活中的挑战，只需更多地关注自己的内心感受，接纳自己的不完美，就能逐步提升能量频率，体验更多的平和与喜悦。`;
+            } else if (totalScore < 90) {
+                return `你的整体能量频率分值为${totalScore}分，处于${energyLevel}阶段。你的内在能量处于较高水平，具备强大的勇气、爱与明智，能够从容面对生活的各种境遇。你已经能够从内在获得满足和快乐，继续保持这份状态，你的能量会吸引更多美好的事物，也会给身边的人带来温暖和力量。`;
+            } else {
+                return `你的整体能量频率分值为${totalScore}分，处于${energyLevel}阶段。恭喜你！你的内在能量处于高阶状态，具备全然的平和与喜悦，能够接纳生活的一切，不受外界干扰。这种高频率的能量会让你体验到生命的本质美好，继续保持这份内在的宁静，你的存在本身就是一种治愈。`;
+            }
+        }
+
+        // 10. 渲染报告页面
+        function renderReport() {
+            // 计算各维度标准化分值（0-100）
+            const normalizedScores = calculateDimensionScores();
+            
+            // 计算总分
+            const totalScore = Math.round(Object.values(normalizedScores).reduce((a, b) => a + b, 0) / Object.keys(normalizedScores).length);
+            const energyLevel = getEnergyLevel(totalScore);
+            
+            // 更新总分显示
+            document.getElementById('total-energy-score').textContent = `整体能量频率：${totalScore}分 | ${energyLevel}`;
+            
+            // 生成整体分析
+            document.getElementById('overall-analysis').textContent = generateOverallAnalysis(totalScore, energyLevel);
+            
+            // 渲染雷达图
+            const ctx = document.getElementById('energy-radar-chart').getContext('2d');
+            // 销毁已存在的图表
+            if (window.radarChart) {
+                window.radarChart.destroy();
+            }
+            
+            window.radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: Object.keys(normalizedScores),
+                    datasets: [{
+                        label: '你的能量分值',
+                        data: Object.values(normalizedScores),
+                        backgroundColor: 'rgba(130, 201, 157, 0.2)',
+                        borderColor: 'rgba(92, 184, 92, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(92, 184, 92, 1)',
+                        pointRadius: 4
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                font: {
+                                    size: 12
+                                }
+                            },
+                            grid: {
+                                color: 'rgba(200, 200, 200, 0.2)'
+                            },
+                            angleLines: {
+                                color: 'rgba(200, 200, 200, 0.4)'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 14,
+                                    weight: '500'
+                                },
+                                color: '#455a64'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.label}：${context.raw}分`;
+                                }
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 2000,
+                        easing: 'easeOutQuart'
+                    }
+                }
+            });
+            
+            // 渲染各维度详细解释
+            const dimensionDetails = document.getElementById('dimension-details');
+            dimensionDetails.innerHTML = '';
+            
+            for (let dimension in normalizedScores) {
+                const score = normalizedScores[dimension];
+                let explanationType = 'medium';
+                if (score < 40) explanationType = 'low';
+                if (score >= 80) explanationType = 'high';
+                
+                const dimensionCard = document.createElement('div');
+                dimensionCard.className = 'bg-gentle-50 rounded-xl p-4 mb-3';
+                dimensionCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-2">
+                        <h4 class="font-semibold text-gentle-800">${dimension}</h4>
+                        <span class="text-calm-600 font-medium">${score}分</span>
+                    </div>
+                    <div class="w-full h-1.5 bg-gentle-200 rounded-full mb-3">
+                        <div class="h-full bg-calm-500 rounded-full transition-all-smooth" style="width: ${score}%"></div>
+                    </div>
+                    <p class="text-sm text-gentle-700">${dimensionExplanations[dimension][explanationType]}</p>
+                `;
+                dimensionDetails.appendChild(dimensionCard);
+            }
+            
+            // 保存测试记录到本地存储
+            const testRecord = {
+                testTime: new Date().toISOString(),
+                totalScore: totalScore,
+                energyLevel: energyLevel,
+                dimensionScores: normalizedScores
+            };
+            
+            const history = JSON.parse(localStorage.getItem('energyTestHistory')) || [];
+            history.push(testRecord);
+            localStorage.setItem('energyTestHistory', JSON.stringify(history));
+        }
+
+        // 11. 模拟演算动画
+        function simulateCalculation() {
+            const progressBar = document.getElementById('calculating-progress');
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    // 跳转到报告页
+                    setTimeout(() => {
+                        showPage('report-page');
+                        renderReport();
+                    }, 500);
+                }
+                progressBar.style.width = `${progress}%`;
+            }, 100);
+        }
+
+        // 12. 事件监听
+        // 页面加载完成
+        document.addEventListener('DOMContentLoaded', () => {
+            // 加载历史记录
+            loadHistoryRecords();
+            
+            // 开始测试按钮
+            document.getElementById('start-test').addEventListener('click', () => {
+                // 重置答题状态
+                currentQuestionIndex = 0;
+                userAnswers = {};
+                dimensionScores = {
+                    "勇气": 0,
+                    "淡定": 0,
+                    "主动": 0,
+                    "宽容": 0,
+                    "明智": 0,
+                    "爱": 0,
+                    "喜悦": 0,
+                    "平和": 0
+                };
+                
+                showPage('quiz-page');
+                renderCurrentQuestion();
+            });
+            
+            // 上一题按钮
+            document.getElementById('prev-btn').addEventListener('click', () => {
+                if (currentQuestionIndex > 0) {
+                    currentQuestionIndex--;
+                    renderCurrentQuestion();
+                }
+            });
+            
+            // 下一题按钮
+            document.getElementById('next-btn').addEventListener('click', () => {
+                const currentQuestion = quizQuestions[currentQuestionIndex];
+                // 检查是否选择了选项
+                if (!userAnswers[currentQuestion.id]) {
+                    alert('请选择一个选项后继续～');
+                    return;
+                }
+                
+                // 最后一题，跳演算页
+                if (currentQuestionIndex === totalQuestions - 1) {
+                    showPage('calculating-page');
+                    simulateCalculation();
+                    return;
+                }
+                
+                // 下一题
+                currentQuestionIndex++;
+                renderCurrentQuestion();
+            });
+            
+            // 重新测试按钮
+            document.getElementById('restart-test').addEventListener('click', () => {
+                showPage('cover-page');
+                loadHistoryRecords(); // 刷新历史记录
+            });
+            
+            // 分享测试按钮
+            document.getElementById('share-test').addEventListener('click', () => {
+                // 复制当前页面链接
+                navigator.clipboard.writeText(window.location.href).then(() => {
+                    alert('测试链接已复制到剪贴板，分享给朋友吧～');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
